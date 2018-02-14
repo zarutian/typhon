@@ -41,6 +41,11 @@ class mapIterator(Object):
 
     @method("List", "Any")
     def next(self, ej):
+        """
+          @param: ej - passed in ejector
+          @return: a List of two; a key and its associated value
+          Returns the next item from the iterator or invokes the passed in ejector when exhausted.
+        """
         if self._index < len(self.objects):
             k, v = self.objects[self._index]
             rv = [k, v]
