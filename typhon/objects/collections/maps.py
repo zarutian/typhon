@@ -401,6 +401,11 @@ class FlexMap(Object):
 
     @method("Void", "Any")
     def _printOn(self, printer):
+        """
+        @param: printer
+        @return: null
+        Given a printer, the object prints a human readable representation of itself on it.
+        """
         printer.call(u"print", [StrObject(u"[")])
         i = 0
         for k, v in self.objectMap.iteritems():
@@ -417,6 +422,11 @@ class FlexMap(Object):
 
     @staticmethod
     def fromPairs(wrappedPairs):
+        """
+        @param: a list of two element lists. Each such is a key value pair.
+        @return: a ConstMap
+        Makes a map from a list of key value pair lists.
+        """
         from typhon.objects.collections.lists import unwrapList
         d = monteMap()
         for obj in unwrapList(wrappedPairs):
