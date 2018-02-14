@@ -613,23 +613,37 @@ class FlexMap(Object):
         """
         @return: a MapIterator
         Makes an iterator for the map.
+        The iterator iterates over an snapshot made when the iterator was made.
         """
-        # ???: Zarutian: does this make an iterator that iterates over possibly chaning FlexMap?
-        #      Should it iterate over an snapshot instead?
         return mapIterator(self.objectMap.items())
 
     @method("List")
     def _uncall(self):
+        """
+        @return: a Portrayal of the map.
+        Used for serialization and some comparison purposes.
+        """
         from typhon.objects.collections.lists import wrapList
         return [ConstMap(self.objectMap.copy()), StrObject(u"diverge"),
                 wrapList([]), EMPTY_MAP]
 
     @method("Bool", "Any")
     def contains(self, needle):
+        """
+        @param: a key
+        @return: a Boolean
+        Answers true or false if given key is in the map.
+        """
         return needle in self.objectMap
 
     @method("Map", "Map", _verb="or")
     def _or(self, other):
+        """
+        @param: a Map
+        @return: a Map
+        Returns an new map that is inclusive of this map and the given map.
+        This maps keys shadow the given maps keys.
+        """
         # XXX This is currently linear time. Can it be better? If not, prove
         # it, please.
         rv = self.objectMap.copy()
@@ -640,6 +654,11 @@ class FlexMap(Object):
 
     @method("Map", "Int")
     def slice(self, start):
+        """
+        @param: an index which is a positive integer
+        @return: a Map
+        Gives you the second half of the map after the given index.
+        """
         if start < 0:
             raise userError(u"slice/1: Negative start")
         items = self.objectMap.items()[start:]
@@ -650,6 +669,12 @@ class FlexMap(Object):
 
     @method("Map", "Int", "Int", _verb="slice")
     def _slice(self, start, stop):
+        """
+        @param: an index, the former one, which is a positive integer
+        @param: an index, the latter one, which is a positive integer
+        @return: a Map
+        Gives you the middle slice of the map between the former and latter index.
+        """
         if start < 0:
             raise userError(u"slice/1: Negative start")
         if stop < 0:
@@ -662,14 +687,26 @@ class FlexMap(Object):
 
     @method("Int")
     def size(self):
+        """
+        @return: number of entries, an Integer
+        Returns back how many key value entries there are in the map.
+        """
         return len(self.objectMap)
 
     @method("Bool")
     def isEmpty(self):
+        """
+        @return: a boolean
+        Returns true if this map is empty, false otherwise.
+        """
         return not self.objectMap
 
     @method("Map")
     def snapshot(self):
+        """
+        @return: a ConstMap
+        Returns an immutable snapshot of this map.
+        """
         return self.objectMap.copy()
 
 
