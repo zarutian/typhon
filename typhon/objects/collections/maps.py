@@ -151,7 +151,7 @@ class ConstMap(Object):
         @return: value
         Given a key and a thunk, will look up key in the map
         and if the value exists under that key then returns the value
-        otherwise the thunk is called.
+        otherwise the thunk is called and its return value used.
         """
         rv = self.objectMap.get(key, None)
         if rv is None:
@@ -472,6 +472,10 @@ class FlexMap(Object):
 
     @method("List")
     def pop(self):
+        """
+        @return: a List of two elements, the key and value
+        Removes and returns the most recently added entry of the map.
+        """
         if self.objectMap:
             key, value = self.objectMap.popitem()
             return [key, value]
@@ -484,10 +488,22 @@ class FlexMap(Object):
 
     @method("Any")
     def diverge(self):
+        """
+        @return: a FlexMap copy of the map.
+        Returns an mutable copy.
+        """
         return FlexMap(self.objectMap.copy())
 
     @method("Any", "Any", "Any")
     def fetch(self, key, thunk):
+        """
+        @param: key, a key to look up by into the map.
+        @param: thunk, a zero arity function
+        @return: value
+        Given a key and a thunk, will look up key in the map
+        and if the value exists under that key then returns the value
+        otherwise the thunk is called and its return value used.
+        """
         rv = self.objectMap.get(key, None)
         if rv is None:
             rv = thunk.call(u"run", [])
@@ -495,10 +511,18 @@ class FlexMap(Object):
 
     @method("List")
     def getKeys(self):
+        """
+        @return: a ConstList
+        Returns a list of the keys in the map.
+        """
         return self.objectMap.keys()
 
     @method("List")
     def getValues(self):
+        """
+        @return: a ConstList
+        Returns a list of the values in the map.
+        """
         return self.objectMap.values()
 
     @method("Any", "Any")
