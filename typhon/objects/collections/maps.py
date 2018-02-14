@@ -610,6 +610,12 @@ class FlexMap(Object):
 
     @method("Any")
     def _makeIterator(self):
+        """
+        @return: a MapIterator
+        Makes an iterator for the map.
+        """
+        # ???: Zarutian: does this make an iterator that iterates over possibly chaning FlexMap?
+        #      Should it iterate over an snapshot instead?
         return mapIterator(self.objectMap.items())
 
     @method("List")
