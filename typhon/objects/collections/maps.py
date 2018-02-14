@@ -306,7 +306,7 @@ class ConstMap(Object):
     @method("Map", "Int")
     def slice(self, start):
         """
-        @param: an index which is a postive integer
+        @param: an index which is a positive integer
         @return: a Map
         Gives you the second half of the map after the given index.
         """
@@ -320,6 +320,12 @@ class ConstMap(Object):
 
     @method("Map", "Int", "Int", _verb="slice")
     def _slice(self, start, stop):
+        """
+        @param: an index, the former one, which is a positive integer
+        @param: an index, the latter one, which is a positive integer
+        @return: a Map
+        Gives you the middle slice of the map between the former and latter index.
+        """
         if start < 0:
             raise userError(u"slice/1: Negative start")
         if stop < 0:
@@ -332,14 +338,26 @@ class ConstMap(Object):
 
     @method("Int")
     def size(self):
+        """
+        @return: number of entries, an Integer
+        Returns back how many key value entries there are in the map.
+        """
         return len(self.objectMap)
 
     @method.py("Bool")
     def isEmpty(self):
+        """
+        @return: a boolean
+        Returns true if this map is empty, false otherwise.
+        """
         return not self.objectMap
 
     @method("Map")
     def snapshot(self):
+        """
+        @return: a ConstMap
+        Returns an immutable snapshot of this map.
+        """
         # This is a copy-on-write optimization; we are trusting the rest of
         # the functions on this map to not alter the map.
         return self.objectMap
