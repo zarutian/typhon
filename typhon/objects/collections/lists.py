@@ -46,6 +46,11 @@ class listIterator(Object):
 
     @method("List", "Any")
     def next(self, ej):
+        """
+        @param: ej - an ejector
+        @return: a two element List
+        Returns the next [index, value] from the iterator.
+        """
         if self._index < self.size:
             rv = [IntObject(self._index), self.objects[self._index]]
             self._index += 1
