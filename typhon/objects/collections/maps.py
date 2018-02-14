@@ -266,6 +266,10 @@ class ConstMap(Object):
 
     @method("List")
     def _uncall(self):
+        """
+        @return: a Portrayal of the map.
+        Used for serialization and some comparison purposes.
+        """
         from typhon.objects.collections.lists import wrapList
         from typhon.scopes.safe import theMakeMap
         pairs = wrapList([wrapList([k, v])
@@ -275,11 +279,22 @@ class ConstMap(Object):
 
     @method.py("Bool", "Any")
     def contains(self, needle):
+        """
+        @param: a key
+        @return: a Boolean
+        Answers true or false if given key is in the map.
+        """
         return needle in self.objectMap
 
     @method.py("Map", "Map", _verb="or")
     @profileTyphon("Map.or/1")
     def _or(self, other):
+        """
+        @param: a Map
+        @return: a Map
+        Returns an new map that is inclusive of this map and the given map.
+        This maps keys shadow the given maps keys.
+        """
         # XXX This is currently linear time. Can it be better? If not, prove
         # it, please.
         rv = self.objectMap.copy()
