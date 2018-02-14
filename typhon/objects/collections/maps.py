@@ -145,6 +145,13 @@ class ConstMap(Object):
 
     @method("Any", "Any", "Any")
     def fetch(self, key, thunk):
+        """
+        @param: key, a key to look up by into the map.
+        @param: thunk, a zero arity function
+        Given a key and a thunk, will look up key in the map
+        and if the value exists under that key then returns the value
+        otherwise the thunk is called.
+        """
         rv = self.objectMap.get(key, None)
         if rv is None:
             rv = thunk.call(u"run", [])
