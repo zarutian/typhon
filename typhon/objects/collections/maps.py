@@ -305,6 +305,11 @@ class ConstMap(Object):
 
     @method("Map", "Int")
     def slice(self, start):
+        """
+        @param: an index which is a postive integer
+        @return: a Map
+        Gives you the second half of the map after the given index.
+        """
         if start < 0:
             raise userError(u"slice/1: Negative start")
         items = self.objectMap.items()[start:]
