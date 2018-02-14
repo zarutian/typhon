@@ -527,6 +527,12 @@ class FlexMap(Object):
 
     @method("Any", "Any")
     def get(self, key):
+        """
+        @param: a key
+        @return: a value
+        Looks up the key in the map and if has an value returns the value
+        otherwise it raises an ?error/exception?.
+        """
         try:
             return self.objectMap[key]
         except KeyError:
@@ -534,6 +540,10 @@ class FlexMap(Object):
 
     @method("Map")
     def reverse(self):
+        """
+        @return: a Map
+        Makes an copy of the map whose order has been reversed.
+        """
         d = monteMap()
         l = [(k, v) for k, v in self.objectMap.iteritems()]
         # Reverse it!
