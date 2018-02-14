@@ -441,14 +441,30 @@ class FlexMap(Object):
 
     @method("Bool")
     def empty(self):
+        """
+        @return: a bool
+        Tells if the map is empty.
+        """
         return not self.objectMap
 
     @method("Void", "Any", "Any")
     def put(self, key, value):
+        """
+        @param: a key
+        @param: a value
+        @return: a null
+        Assigns or changes the value under the given key to the given value.
+        """
         self.objectMap[key] = value
 
     @method("Void", "Any")
     def removeKey(self, key):
+        """
+        @param: a key
+        @return: a null
+        Removes the given key from the map.
+        Raises an ?error/exception? if the given key is not found in the map.
+        """
         try:
             del self.objectMap[key]
         except KeyError:
