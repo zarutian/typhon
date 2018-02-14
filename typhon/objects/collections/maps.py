@@ -148,6 +148,7 @@ class ConstMap(Object):
         """
         @param: key, a key to look up by into the map.
         @param: thunk, a zero arity function
+        @return: value
         Given a key and a thunk, will look up key in the map
         and if the value exists under that key then returns the value
         otherwise the thunk is called.
@@ -159,14 +160,28 @@ class ConstMap(Object):
 
     @method("List")
     def getKeys(self):
+        """
+        @return: a ConstList
+        Returns a list of the keys in the map.
+        """
         return self.objectMap.keys()
 
     @method("List")
     def getValues(self):
+        """
+        @return: a ConstList
+        Returns a list of the values in the map.
+        """
         return self.objectMap.values()
 
     @method("Any", "Any")
     def get(self, key):
+        """
+        @param: key
+        @return: value
+        Looks up the key in the map and if has an value returns the value
+        otherwise it raises an ?error/exception?.
+        """
         try:
             return self.objectMap[key]
         except KeyError:
@@ -174,6 +189,10 @@ class ConstMap(Object):
 
     @method("Map")
     def reverse(self):
+        """
+        @return: a Map
+        Makes an copy of the map whose order has been reversed.
+        """
         d = monteMap()
         l = [(k, v) for k, v in self.objectMap.iteritems()]
         # Reverse it!
@@ -184,6 +203,10 @@ class ConstMap(Object):
 
     @method("Map")
     def sortKeys(self):
+        """
+        @return: a Map
+        Makes an sorted-by-key copy of the map.
+        """
         # Extract a list, sort it, pack it back into a dict.
         d = monteMap()
         l = [(k, v) for k, v in self.objectMap.iteritems()]
@@ -194,6 +217,10 @@ class ConstMap(Object):
 
     @method("Map")
     def sortValues(self):
+        """
+        @return: a Map
+        Makes an sorted-by-value copy of the map.
+        """
         # Same as sortKeys/0.
         d = monteMap()
         l = [(k, v) for k, v in self.objectMap.iteritems()]
