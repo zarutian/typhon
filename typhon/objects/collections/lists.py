@@ -94,10 +94,19 @@ class FlexList(Object):
 
     @method("Bool")
     def empty(self):
+        """
+        @return: a boolean
+        Returns true if the list is empty returns false otherwise.
+        """
         return self.strategy.size(self) == 0
 
     @method("List", "List")
     def join(self, pieces):
+        """
+        @param: an appendant list
+        @return: an joined list of this list and the appendant list.
+        Joins two lists together into a new one.
+        """
         l = []
         filler = self.strategy.fetch_all(self)
         first = True
@@ -114,20 +123,38 @@ class FlexList(Object):
 
     @method("List")
     def _uncall(self):
+        """
+        @return: a Portrayal of itself
+        Used for serialization and some comparison purposes.
+        """
         from typhon.objects.collections.maps import EMPTY_MAP
         return [wrapList(self.snapshot()), StrObject(u"diverge"),
                 wrapList([]), EMPTY_MAP]
 
     @method("List", "List")
     def add(self, other):
+        """
+        @param: the other List
+        @return: a joined List
+        Joins two lists into a new one and returns that.
+        """
         return self.strategy.fetch_all(self) + other
 
     @method("Any")
     def diverge(self):
+        """
+        @return: a FlexList
+        Makes a mutable copy of the list.
+        """
         return FlexList(self.strategy.fetch_all(self))
 
     @method("Void", "Any")
     def extend(self, other):
+        """
+        @param: the item
+        @return: null
+        Appends the item to the list.
+        """
         # XXX factor me plz
         try:
             data = unwrapList(other)
@@ -140,6 +167,11 @@ class FlexList(Object):
 
     @method("Any", "Int")
     def get(self, index):
+        """
+        @param: an index which is a positive integer
+        @return: an item
+        Lookup by index into the list.
+        """
         # Lookup by index.
         if index >= self.strategy.size(self) or index < 0:
             raise userError(u"get/1: Index %d is out of bounds" % index)
@@ -147,12 +179,22 @@ class FlexList(Object):
 
     @method("Void", "Int", "Any")
     def insert(self, index, value):
+        """
+        @param: an index which is a positive integer
+        @param: an item
+        @return: null
+        Inserts the item at index position in the list.
+        """
         if index < 0:
             raise userError(u"insert/2: Index %d is out of bounds" % index)
         self.strategy.insert(self, index, [value])
 
     @method("Any")
     def last(self):
+        """
+        @return: an item
+        Returns the last item of the list.
+        """
         size = self.strategy.size(self)
         if size:
             return self.strategy.fetch(self, size - 1)
@@ -160,11 +202,20 @@ class FlexList(Object):
 
     @method("List", "Int")
     def multiply(self, count):
+        """
+        @param: count, a positive integer
+        @return: a new list
+        Create a new list by repeating the contents of this list.
+        """
         # multiply/1: Create a new list by repeating this list's contents.
         return self.strategy.fetch_all(self) * count
 
     @method("Any")
     def pop(self):
+        """
+        @return: an item
+        Pops the last item off the list and returns it.
+        """
         try:
             return self.strategy.pop(self, self.strategy.size(self) - 1)
         except IndexError:
@@ -172,27 +223,50 @@ class FlexList(Object):
 
     @method("Void", "Any")
     def push(self, value):
+        """
+        @param: an item
+        @return: null
+        Pushes the item onto the end of the list.
+        """
         self.strategy.append(self, [value])
 
     @method("List")
     def reverse(self):
+        """
+        @return: a reversed list
+        Returns a reversed list copy of this list.
+        """
         new = self.strategy.fetch_all(self)[:]
         new.reverse()
         return new
 
     @method("Void")
     def reverseInPlace(self):
+        """
+        @return: null
+        Rerverses the list in place.
+        """
         new = self.strategy.fetch_all(self)[:]
         new.reverse()
         self.strategy.store_all(self, new)
 
     @method("List", "Any", _verb="with")
     def _with(self, value):
+        """
+        @param: an item
+        @return: a new list
+        Create a new list with the appended item.
+        """
         # with/1: Create a new list with an appended object.
         return self.strategy.fetch_all(self) + [value]
 
     @method("List", "Int", "Any", _verb="with")
     def withIndex(self, index, value):
+        """
+        @param: an index, a positive integer
+        @param: a value
+        Makes a new ConstList where the index'th item has been replaced with the given value.
+        """
         # Make a new ConstList.
         if index >= self.strategy.size(self) or index < 0:
             raise userError(u"with/2: Index %d is out of bounds" % index)
