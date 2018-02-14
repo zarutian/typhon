@@ -554,6 +554,10 @@ class FlexMap(Object):
 
     @method("Map")
     def sortKeys(self):
+        """
+        @return: a Map
+        Makes an sorted-by-key copy of the map.
+        """
         # Extract a list, sort it, pack it back into a dict.
         d = monteMap()
         l = [(k, v) for k, v in self.objectMap.iteritems()]
@@ -564,6 +568,10 @@ class FlexMap(Object):
 
     @method("Map")
     def sortValues(self):
+        """
+        @return: a Map
+        Makes an sorted-by-value copy of the map.
+        """
         # Same as sortKeys/0.
         d = monteMap()
         l = [(k, v) for k, v in self.objectMap.iteritems()]
@@ -574,6 +582,12 @@ class FlexMap(Object):
 
     @method("Map", "Any", "Any", _verb="with")
     def _with(self, key, value):
+        """
+        @param: a key
+        @param: a value
+        @return: a Map
+        Makes an copy of the map where the given key has been set to the given value.
+        """
         # Replace by key.
         d = self.objectMap.copy()
         d[key] = value
@@ -581,6 +595,11 @@ class FlexMap(Object):
 
     @method("Map", "Any")
     def without(self, key):
+        """
+        @param: a key
+        @return: a Map
+        Makes an copy of the map where the given key and its value has been removed.
+        """
         # Even if we don't have the key, we need to copy since we're returning
         # a ConstMap.
         d = self.objectMap.copy()
