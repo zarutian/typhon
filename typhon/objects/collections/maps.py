@@ -94,6 +94,11 @@ class ConstMap(Object):
     @staticmethod
     @profileTyphon("_makeMap.fromPairs/1")
     def fromPairs(wrappedPairs):
+        """
+        @param: a list of two element lists. Each such is a key value pair.
+        @return: a ConstMap
+        Makes a map from a list of key value pair lists.
+        """
         from typhon.objects.collections.lists import unwrapList
         d = monteMap()
         for obj in unwrapList(wrappedPairs):
@@ -118,6 +123,10 @@ class ConstMap(Object):
 
     @method.py("Bool")
     def empty(self):
+        """
+        @return: a bool
+        Tells if the map is empty.
+        """
         return not self.objectMap
 
     @method("Set")
@@ -128,6 +137,10 @@ class ConstMap(Object):
     @method("Any")
     def diverge(self):
         # Split off a copy so that we are not mutated.
+        """
+        @return: a FlexMap
+        Makes an mutable copy of the map.
+        """
         return FlexMap(self.objectMap.copy())
 
     @method("Any", "Any", "Any")
