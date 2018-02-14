@@ -231,6 +231,12 @@ class ConstMap(Object):
 
     @method.py("Map", "Any", "Any", _verb="with")
     def _with(self, key, value):
+        """
+        @param: a key
+        @param: a value
+        @return: a Map
+        Makes an copy of the map where the given key has been set to the given value.
+        """
         # Replace by key.
         d = self.objectMap.copy()
         d[key] = value
@@ -238,6 +244,11 @@ class ConstMap(Object):
 
     @method("Map", "Any")
     def without(self, key):
+        """
+        @param: a key
+        @return: a Map
+        Makes an copy of the map where the given key and its value has been removed.
+        """
         # Ignore the case where the key wasn't in the map.
         if key in self.objectMap:
             d = self.objectMap.copy()
@@ -247,6 +258,10 @@ class ConstMap(Object):
 
     @method("Any")
     def _makeIterator(self):
+        """
+        @return: a MapIterator
+        Makes an iterator for the map.
+        """
         return mapIterator(self.objectMap.items())
 
     @method("List")
