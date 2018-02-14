@@ -59,7 +59,7 @@ class mapIterator(Object):
 @audited.Transparent
 class ConstMap(Object):
     """
-    An ordered map of objects.
+    An ordered immutable map of objects.
     """
 
     _immutable_fields_ = "objectMap",
@@ -393,7 +393,7 @@ EMPTY_MAP = ConstMap(monteMap())
 @autohelp
 class FlexMap(Object):
     """
-    An ordered map of objects.
+    An ordered mutable map of objects.
     """
 
     def __init__(self, objectMap):
