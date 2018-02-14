@@ -79,6 +79,11 @@ class FlexList(Object):
 
     @method("Void", "Any")
     def _printOn(self, printer):
+        """
+        @param: printer
+        @return: null
+        Given a printer, the object prints a human readable representation of itself on it.
+        """
         printer.call(u"print", [StrObject(u"[")])
         items = self.strategy.fetch_all(self)
         for i, obj in enumerate(items):
