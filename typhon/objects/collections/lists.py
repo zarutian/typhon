@@ -80,8 +80,6 @@ class FlexList(Object):
     @method("Void", "Any")
     def _printOn(self, printer):
         """
-        @param: printer
-        @return: null
         Given a printer, the object prints a human readable representation of itself on it.
         """
         printer.call(u"print", [StrObject(u"[")])
@@ -95,7 +93,6 @@ class FlexList(Object):
     @method("Bool")
     def empty(self):
         """
-        @return: a boolean
         Returns true if the list is empty returns false otherwise.
         """
         return self.strategy.size(self) == 0
@@ -103,9 +100,7 @@ class FlexList(Object):
     @method("List", "List")
     def join(self, pieces):
         """
-        @param: an appendant list
-        @return: an joined list of this list and the appendant list.
-        Joins two lists together into a new one.
+        Joins an list on the end of this list together into a new one.
         """
         l = []
         filler = self.strategy.fetch_all(self)
@@ -124,8 +119,7 @@ class FlexList(Object):
     @method("List")
     def _uncall(self):
         """
-        @return: a Portrayal of itself
-        Used for serialization and some comparison purposes.
+        Returns a Portrayal of itself which is used for serialization and some comparison purposes.
         """
         from typhon.objects.collections.maps import EMPTY_MAP
         return [wrapList(self.snapshot()), StrObject(u"diverge"),
@@ -134,25 +128,20 @@ class FlexList(Object):
     @method("List", "List")
     def add(self, other):
         """
-        @param: the other List
-        @return: a joined List
-        Joins two lists into a new one and returns that.
+        Joins a lists onto this list as a new one and returns it.
         """
         return self.strategy.fetch_all(self) + other
 
     @method("Any")
     def diverge(self):
         """
-        @return: a FlexList
-        Makes a mutable copy of the list.
+        Makes a mutable copy of the list. (FlexList)
         """
         return FlexList(self.strategy.fetch_all(self))
 
     @method("Void", "Any")
     def extend(self, other):
         """
-        @param: the item
-        @return: null
         Appends the item to the list.
         """
         # XXX factor me plz
@@ -168,9 +157,7 @@ class FlexList(Object):
     @method("Any", "Int")
     def get(self, index):
         """
-        @param: an index which is a positive integer
-        @return: an item
-        Lookup by index into the list.
+        Lookup by index (a postitive integer) into the list.
         """
         # Lookup by index.
         if index >= self.strategy.size(self) or index < 0:
@@ -180,10 +167,7 @@ class FlexList(Object):
     @method("Void", "Int", "Any")
     def insert(self, index, value):
         """
-        @param: an index which is a positive integer
-        @param: an item
-        @return: null
-        Inserts the item at index position in the list.
+        Inserts the item at index position (a postive integer) given in the list.
         """
         if index < 0:
             raise userError(u"insert/2: Index %d is out of bounds" % index)
@@ -192,7 +176,6 @@ class FlexList(Object):
     @method("Any")
     def last(self):
         """
-        @return: an item
         Returns the last item of the list.
         """
         size = self.strategy.size(self)
@@ -203,9 +186,7 @@ class FlexList(Object):
     @method("List", "Int")
     def multiply(self, count):
         """
-        @param: count, a positive integer
-        @return: a new list
-        Create a new list by repeating the contents of this list.
+        Create a new list by repeating the contents of this list, count (postive integer) times.
         """
         # multiply/1: Create a new list by repeating this list's contents.
         return self.strategy.fetch_all(self) * count
@@ -213,7 +194,6 @@ class FlexList(Object):
     @method("Any")
     def pop(self):
         """
-        @return: an item
         Pops the last item off the list and returns it.
         """
         try:
@@ -224,16 +204,13 @@ class FlexList(Object):
     @method("Void", "Any")
     def push(self, value):
         """
-        @param: an item
-        @return: null
-        Pushes the item onto the end of the list.
+        Pushes the item given onto the end of the list.
         """
         self.strategy.append(self, [value])
 
     @method("List")
     def reverse(self):
         """
-        @return: a reversed list
         Returns a reversed list copy of this list.
         """
         new = self.strategy.fetch_all(self)[:]
@@ -243,7 +220,6 @@ class FlexList(Object):
     @method("Void")
     def reverseInPlace(self):
         """
-        @return: null
         Rerverses the list in place.
         """
         new = self.strategy.fetch_all(self)[:]
@@ -253,9 +229,7 @@ class FlexList(Object):
     @method("List", "Any", _verb="with")
     def _with(self, value):
         """
-        @param: an item
-        @return: a new list
-        Create a new list with the appended item.
+        Create a new list with the appended item added.
         """
         # with/1: Create a new list with an appended object.
         return self.strategy.fetch_all(self) + [value]
@@ -263,9 +237,7 @@ class FlexList(Object):
     @method("List", "Int", "Any", _verb="with")
     def withIndex(self, index, value):
         """
-        @param: an index, a positive integer
-        @param: a value
-        Makes a new ConstList where the index'th item has been replaced with the given value.
+        Makes a new ConstList where the index'th (postive integer) item has been replaced with the given value.
         """
         # Make a new ConstList.
         if index >= self.strategy.size(self) or index < 0:
@@ -276,12 +248,18 @@ class FlexList(Object):
 
     @method("Any")
     def _makeIterator(self):
+        """
+        Makes a new iterator that iterates over a snopshot of the list made when the iterator was made.
+        """
         # This is the behavior we choose: Iterating over a FlexList grants
         # iteration over a snapshot of the list's contents at that point.
         return listIterator(self.strategy.fetch_all(self))
 
     @method("Map")
     def asMap(self):
+        """
+        Makes an map out of the list. (Incomplete docu)
+        """
         from typhon.objects.collections.maps import monteMap
         d = monteMap()
         for i, o in enumerate(self.strategy.fetch_all(self)):
@@ -290,6 +268,9 @@ class FlexList(Object):
 
     @method("Set")
     def asSet(self):
+        """
+        Makes an set out of the list. (Incomplete docu)
+        """
         from typhon.objects.collections.maps import monteMap
         d = monteMap()
         for o in self.strategy.fetch_all(self):
@@ -298,6 +279,9 @@ class FlexList(Object):
 
     @method.py("Bool", "Any")
     def contains(self, needle):
+        """
+        Checks if the given value is in the list or not.
+        """
         from typhon.objects.equality import EQUAL, optSame
         for specimen in self.strategy.fetch_all(self):
             if optSame(needle, specimen) is EQUAL:
@@ -306,6 +290,9 @@ class FlexList(Object):
 
     @method("Int", "Any")
     def indexOf(self, needle):
+        """
+        Returns the index of the given value if found. Returns -1 otherwise.
+        """
         from typhon.objects.equality import EQUAL, optSame
         for index, specimen in enumerate(self.strategy.fetch_all(self)):
             if optSame(needle, specimen) is EQUAL:
@@ -314,6 +301,9 @@ class FlexList(Object):
 
     @method.py("Void", "Int", "Any")
     def put(self, index, value):
+        """
+        Sets the index'th place of the list to the given value.
+        """
         top = self.strategy.size(self)
         if 0 <= index < top:
             self.strategy.store(self, index, value)
@@ -323,14 +313,23 @@ class FlexList(Object):
 
     @method("Int")
     def size(self):
+        """
+        Returns the number of items in the list.
+        """
         return self.strategy.size(self)
 
     @method("Bool")
     def isEmpty(self):
+        """
+        Returns true if the list is empty, false otherwise.
+        """
         return not self.strategy.size(self)
 
     @method("List", "Int")
     def slice(self, start):
+        """
+        Returns the second half of the list after the given slice index.
+        """
         if start < 0:
             raise userError(u"slice/1: Negative start")
         stop = self.strategy.size(self)
@@ -338,6 +337,9 @@ class FlexList(Object):
 
     @method("List", "Int", "Int", _verb="slice")
     def _slice(self, start, stop):
+        """
+        Returns the slice of the list that starts at first given index upto the second given index.
+        """
         if start < 0:
             raise userError(u"slice/2: Negative start")
         if stop < 0:
@@ -346,6 +348,9 @@ class FlexList(Object):
 
     @method.py("List")
     def snapshot(self):
+        """
+        Returns an ConstList snapshot of the list. (The snapshot is immutable.)
+        """
         return self.strategy.fetch_all(self)
 
 
