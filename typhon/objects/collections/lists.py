@@ -47,9 +47,7 @@ class listIterator(Object):
     @method("List", "Any")
     def next(self, ej):
         """
-        @param: ej - an ejector
-        @return: a two element List
-        Returns the next [index, value] from the iterator.
+        Takes an ejector and returns the next [index, value] from the iterator or if throws "Iterator exhausted".
         """
         if self._index < self.size:
             rv = [IntObject(self._index), self.objects[self._index]]
@@ -93,6 +91,7 @@ class FlexList(Object):
     @method("Bool")
     def empty(self):
         """
+        deprecated, use isEmpty/0 instead.
         Returns true if the list is empty returns false otherwise.
         """
         return self.strategy.size(self) == 0
@@ -448,6 +447,7 @@ class ConstList(Object):
     @method("Bool")
     def empty(self):
         """
+        deprecated, use isEmpty/0 instead.
         Returns true if the list is empty returns false otherwise.
         """
         return bool(self.objs)
@@ -466,6 +466,9 @@ class ConstList(Object):
     @method("List", "List")
     @profileTyphon("List.join/1")
     def join(self, pieces):
+        """
+        Joins an list on the end of this list together into a new one.
+        """
         l = []
         filler = self.objs
         first = True
@@ -482,11 +485,17 @@ class ConstList(Object):
 
     @method("Any")
     def diverge(self):
+        """
+        Makes a mutable copy of the list. (FlexList)
+        """
         # XXX is this copy necessary?
         return FlexList(self.objs[:])
 
     @method("Any", "Int")
     def get(self, index):
+        """
+        Lookup by index (a postitive integer) into the list.
+        """
         # Lookup by index.
         if index < 0:
             raise userError(u"get/1: Index %d cannot be negative" % index)
@@ -498,6 +507,9 @@ class ConstList(Object):
 
     @method("Any")
     def last(self):
+        """
+        Returns the last item of the list.
+        """
         if self.objs:
             return self.objs[-1]
         else:
@@ -505,6 +517,9 @@ class ConstList(Object):
 
     @method("List", "Int")
     def multiply(self, count):
+        """
+        Create a new list by repeating the contents of this list, count (postive integer) times.
+        """
         # multiply/1: Create a new list by repeating this list's contents.
         if count < 0:
             raise userError(u"multiply/1: Can't multiply list %d times" % count)
@@ -515,28 +530,43 @@ class ConstList(Object):
 
     @method("List")
     def reverse(self):
+        """
+        Returns a reversed list copy of this list.
+        """
         l = self.objs[:]
         l.reverse()
         return l
 
     @method("List", "Int", "Any", _verb="with")
     def _with(self, index, value):
+        """
+        Create a new list with the appended item added.
+        """
         # Replace by index.
         return self.put(index, value)
 
     @method("List")
     def _uncall(self):
+        """
+        Returns a Portrayal of itself which is used for serialization and some comparison purposes.
+        """
         from typhon.scopes.safe import theMakeList
         from typhon.objects.collections.maps import EMPTY_MAP
         return [theMakeList, StrObject(u"run"), self, EMPTY_MAP]
 
     @method("Any")
     def _makeIterator(self):
+        """
+        Makes a new iterator that iterates over a snopshot of the list made when the iterator was made.
+        """
         # XXX could be more efficient with case analysis
         return listIterator(self.objs)
 
     @method("Map")
     def asMap(self):
+        """
+        Makes an map out of the list. (Incomplete docu)
+        """
         from typhon.objects.collections.maps import monteMap
         d = monteMap()
         for i, o in enumerate(self.objs):
@@ -545,6 +575,9 @@ class ConstList(Object):
 
     @method("Set")
     def asSet(self):
+        """
+        Makes an set out of the list. (Incomplete docu)
+        """
         from typhon.objects.collections.sets import monteSet
         d = monteSet()
         for o in self.objs:
@@ -575,6 +608,9 @@ class ConstList(Object):
     @method("Bool", "Any")
     @profileTyphon("List.contains/1")
     def contains(self, needle):
+        """
+        Checks if the given value is in the list or not.
+        """
         from typhon.objects.equality import EQUAL, optSame
         for specimen in self.objs:
             if optSame(needle, specimen) is EQUAL:
@@ -584,6 +620,9 @@ class ConstList(Object):
     @method("Int", "Any")
     @profileTyphon("List.indexOf/1")
     def indexOf(self, needle):
+        """
+        Returns the index of the given value if found. Returns -1 otherwise.
+        """
         from typhon.objects.equality import EQUAL, optSame
         for index, specimen in enumerate(self.objs):
             if optSame(needle, specimen) is EQUAL:
@@ -593,6 +632,9 @@ class ConstList(Object):
     @method.py("List", "Any", _verb="with")
     @profileTyphon("List.with/1")
     def with_(self, obj):
+        """
+        Create a new list with the appended item added.
+        """
         if not self.objs:
             return [obj]
         else:
@@ -600,6 +642,9 @@ class ConstList(Object):
 
     @method.py("List", "Int", "Any")
     def put(self, index, value):
+        """
+        Makes a new list where index'th item has been replaced with the given value.
+        """
         top = len(self.objs)
         if index == top:
             return self.with_(value)
@@ -615,6 +660,9 @@ class ConstList(Object):
     @method.py("Int")
     @elidable
     def size(self):
+        """
+        Returns the number of items in the list.
+        """
         return len(self.objs)
 
     @method("Bool")
@@ -626,6 +674,9 @@ class ConstList(Object):
 
     @method("List", "Int")
     def slice(self, start):
+        """
+        Returns the second half of the list after the given slice index.
+        """
         if start < 0:
             raise userError(u"slice/1: Negative start")
         stop = len(self.objs)
@@ -634,6 +685,9 @@ class ConstList(Object):
 
     @method("List", "Int", "Int", _verb="slice")
     def _slice(self, start, stop):
+        """
+        Returns the slice of the list that starts at first given index upto the second given index.
+        """
         if start < 0:
             raise userError(u"slice/1: Negative start")
         if stop < 0:
@@ -644,21 +698,33 @@ class ConstList(Object):
 
     @method("Any")
     def snapshot(self):
+        """
+        Returns the list itself as it is already immutable.
+        """
         return self
 
     @method("List")
     @profileTyphon("List.sort/0")
     def sort(self):
+        """
+        Returns a sorted copy of the list.
+        """
         l = self.objs[:]
         MonteSorter(l).sort()
         return l
 
     @method("Int", "List")
     def startOf(self, needleCL, start=0):
+        """
+        Returns the starting index of where the given sublist starts in the list. Returns -1 otherwise.
+        """
         return self._startOf(needleCL, 0)
 
     @method.py("Int", "List", "Int", _verb="startOf")
     def _startOf(self, needleCL, start):
+        """
+        Returns the starting index of where the given sublist starts in the list. Returns -1 otherwise.
+        """
         if start < 0:
             raise userError(u"startOf/2: Negative start %d not permitted" %
                     start)
