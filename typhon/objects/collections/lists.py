@@ -389,7 +389,7 @@ def listFromIterable(obj):
 @audited.Transparent
 class ConstList(Object):
     """
-    A list of objects.
+    An immutable list of objects.
     """
 
     _immutable_fields_ = "objs[*]",
@@ -409,6 +409,9 @@ class ConstList(Object):
 
     @method("Void", "Any")
     def _printOn(self, printer):
+        """
+        Given a printer, the object prints a human readable representation of itself on it.
+        """
         printer.call(u"print", [StrObject(u"[")])
         for i, obj in enumerate(self.objs):
             printer.call(u"quote", [obj])
@@ -417,10 +420,16 @@ class ConstList(Object):
         printer.call(u"print", [StrObject(u"]")])
 
     def computeHash(self, depth):
+        """
+        Computes an non-cryptographic hashmap hash.
+        """
         from typhon.objects.equality import samenessHash
         return samenessHash(self, depth, None)
 
     def isSettled(self, sofar=None):
+        """
+        Returns true if the list elements are settled, false otherwise.
+        """
         # Check for a usable cached result.
         if self._isSettled:
             return True
@@ -438,11 +447,17 @@ class ConstList(Object):
 
     @method("Bool")
     def empty(self):
+        """
+        Returns true if the list is empty returns false otherwise.
+        """
         return bool(self.objs)
 
     @method("List", "List")
     @profileTyphon("List.add/1")
     def add(self, other):
+        """
+        Joins a lists onto this list as a new one and returns it.
+        """
         if other:
             return self.objs + other
         else:
@@ -604,6 +619,9 @@ class ConstList(Object):
 
     @method("Bool")
     def isEmpty(self):
+        """
+        Returns true if the list is empty returns false otherwise.
+        """
         return not self.objs
 
     @method("List", "Int")
