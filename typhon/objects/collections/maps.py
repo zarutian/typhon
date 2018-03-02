@@ -42,8 +42,6 @@ class mapIterator(Object):
     @method("List", "Any")
     def next(self, ej):
         """
-        @param: ej - passed in ejector
-        @return: a List of two; a key and its associated value
         Returns the next item from the iterator or invokes the passed in ejector when exhausted.
         """
         if self._index < len(self.objects):
@@ -70,8 +68,6 @@ class ConstMap(Object):
     @method("Void", "Any")
     def _printOn(self, printer):
         """
-        @param: printer
-        @return: null
         Given a printer, the object prints a human readable representation of itself on it.
         """
         printer.call(u"print", [StrObject(u"[")])
@@ -95,8 +91,6 @@ class ConstMap(Object):
     @profileTyphon("_makeMap.fromPairs/1")
     def fromPairs(wrappedPairs):
         """
-        @param: a list of two element lists. Each such is a key value pair.
-        @return: a ConstMap
         Makes a map from a list of key value pair lists.
         """
         from typhon.objects.collections.lists import unwrapList
@@ -124,13 +118,16 @@ class ConstMap(Object):
     @method.py("Bool")
     def empty(self):
         """
-        @return: a bool
+        deprecated. Use isEmpty/0 instead.
         Tells if the map is empty.
         """
         return not self.objectMap
 
     @method("Set")
     def asSet(self):
+        """
+        Converts the map into a set and returns that.
+        """
         # COW optimization.
         return self.objectMap
 
@@ -138,7 +135,6 @@ class ConstMap(Object):
     def diverge(self):
         # Split off a copy so that we are not mutated.
         """
-        @return: a FlexMap
         Makes an mutable copy of the map.
         """
         return FlexMap(self.objectMap.copy())
@@ -146,9 +142,6 @@ class ConstMap(Object):
     @method("Any", "Any", "Any")
     def fetch(self, key, thunk):
         """
-        @param: key, a key to look up by into the map.
-        @param: thunk, a zero arity function
-        @return: value
         Given a key and a thunk, will look up key in the map
         and if the value exists under that key then returns the value
         otherwise the thunk is called and its return value used.
@@ -161,24 +154,20 @@ class ConstMap(Object):
     @method("List")
     def getKeys(self):
         """
-        @return: a ConstList
-        Returns a list of the keys in the map.
+        Returns an immutable list of the keys in the map.
         """
         return self.objectMap.keys()
 
     @method("List")
     def getValues(self):
         """
-        @return: a ConstList
-        Returns a list of the values in the map.
+        Returns an immutable list of the values in the map.
         """
         return self.objectMap.values()
 
     @method("Any", "Any")
     def get(self, key):
         """
-        @param: key
-        @return: value
         Looks up the key in the map and if has an value returns the value
         otherwise it raises an ?error/exception?.
         """
@@ -190,7 +179,6 @@ class ConstMap(Object):
     @method("Map")
     def reverse(self):
         """
-        @return: a Map
         Makes an copy of the map whose order has been reversed.
         """
         d = monteMap()
@@ -204,7 +192,6 @@ class ConstMap(Object):
     @method("Map")
     def sortKeys(self):
         """
-        @return: a Map
         Makes an sorted-by-key copy of the map.
         """
         # Extract a list, sort it, pack it back into a dict.
@@ -218,7 +205,6 @@ class ConstMap(Object):
     @method("Map")
     def sortValues(self):
         """
-        @return: a Map
         Makes an sorted-by-value copy of the map.
         """
         # Same as sortKeys/0.
@@ -232,9 +218,6 @@ class ConstMap(Object):
     @method.py("Map", "Any", "Any", _verb="with")
     def _with(self, key, value):
         """
-        @param: a key
-        @param: a value
-        @return: a Map
         Makes an copy of the map where the given key has been set to the given value.
         """
         # Replace by key.
@@ -245,8 +228,6 @@ class ConstMap(Object):
     @method("Map", "Any")
     def without(self, key):
         """
-        @param: a key
-        @return: a Map
         Makes an copy of the map where the given key and its value has been removed.
         """
         # Ignore the case where the key wasn't in the map.
@@ -259,7 +240,6 @@ class ConstMap(Object):
     @method("Any")
     def _makeIterator(self):
         """
-        @return: a MapIterator
         Makes an iterator for the map.
         """
         return mapIterator(self.objectMap.items())
@@ -267,8 +247,7 @@ class ConstMap(Object):
     @method("List")
     def _uncall(self):
         """
-        @return: a Portrayal of the map.
-        Used for serialization and some comparison purposes.
+        Returns a Portrayal of the map which is used for serialization and some comparison purposes.
         """
         from typhon.objects.collections.lists import wrapList
         from typhon.scopes.safe import theMakeMap
@@ -280,8 +259,6 @@ class ConstMap(Object):
     @method.py("Bool", "Any")
     def contains(self, needle):
         """
-        @param: a key
-        @return: a Boolean
         Answers true or false if given key is in the map.
         """
         return needle in self.objectMap
@@ -290,8 +267,6 @@ class ConstMap(Object):
     @profileTyphon("Map.or/1")
     def _or(self, other):
         """
-        @param: a Map
-        @return: a Map
         Returns an new map that is inclusive of this map and the given map.
         This maps keys shadow the given maps keys.
         """
@@ -306,9 +281,7 @@ class ConstMap(Object):
     @method("Map", "Int")
     def slice(self, start):
         """
-        @param: an index which is a positive integer
-        @return: a Map
-        Gives you the second half of the map after the given index.
+        Returns the second half of the map after the given index.
         """
         if start < 0:
             raise userError(u"slice/1: Negative start")
@@ -321,10 +294,7 @@ class ConstMap(Object):
     @method("Map", "Int", "Int", _verb="slice")
     def _slice(self, start, stop):
         """
-        @param: an index, the former one, which is a positive integer
-        @param: an index, the latter one, which is a positive integer
-        @return: a Map
-        Gives you the middle slice of the map between the former and latter index.
+        Returns the middle slice of the map between the given former and latter index.
         """
         if start < 0:
             raise userError(u"slice/1: Negative start")
@@ -339,7 +309,6 @@ class ConstMap(Object):
     @method("Int")
     def size(self):
         """
-        @return: number of entries, an Integer
         Returns back how many key value entries there are in the map.
         """
         return len(self.objectMap)
@@ -347,7 +316,6 @@ class ConstMap(Object):
     @method.py("Bool")
     def isEmpty(self):
         """
-        @return: a boolean
         Returns true if this map is empty, false otherwise.
         """
         return not self.objectMap
@@ -355,7 +323,6 @@ class ConstMap(Object):
     @method("Map")
     def snapshot(self):
         """
-        @return: a ConstMap
         Returns an immutable snapshot of this map.
         """
         # This is a copy-on-write optimization; we are trusting the rest of
@@ -402,8 +369,6 @@ class FlexMap(Object):
     @method("Void", "Any")
     def _printOn(self, printer):
         """
-        @param: printer
-        @return: null
         Given a printer, the object prints a human readable representation of itself on it.
         """
         printer.call(u"print", [StrObject(u"[")])
@@ -423,8 +388,6 @@ class FlexMap(Object):
     @staticmethod
     def fromPairs(wrappedPairs):
         """
-        @param: a list of two element lists. Each such is a key value pair.
-        @return: a ConstMap
         Makes a map from a list of key value pair lists.
         """
         from typhon.objects.collections.lists import unwrapList
@@ -442,7 +405,7 @@ class FlexMap(Object):
     @method("Bool")
     def empty(self):
         """
-        @return: a bool
+        deprecated. Use isEmpty/0 instead
         Tells if the map is empty.
         """
         return not self.objectMap
@@ -450,9 +413,6 @@ class FlexMap(Object):
     @method("Void", "Any", "Any")
     def put(self, key, value):
         """
-        @param: a key
-        @param: a value
-        @return: a null
         Assigns or changes the value under the given key to the given value.
         """
         self.objectMap[key] = value
@@ -460,8 +420,6 @@ class FlexMap(Object):
     @method("Void", "Any")
     def removeKey(self, key):
         """
-        @param: a key
-        @return: a null
         Removes the given key from the map.
         Raises an ?error/exception? if the given key is not found in the map.
         """
@@ -473,8 +431,7 @@ class FlexMap(Object):
     @method("List")
     def pop(self):
         """
-        @return: a List of two elements, the key and value
-        Removes and returns the most recently added entry of the map.
+        Removes and returns the most recently added entry (a two element list) of the map.
         """
         if self.objectMap:
             key, value = self.objectMap.popitem()
@@ -484,12 +441,14 @@ class FlexMap(Object):
 
     @method("Set")
     def asSet(self):
+        """
+        Converts the map into a set and returns that.
+        """
         return self.objectMap.copy()
 
     @method("Any")
     def diverge(self):
         """
-        @return: a FlexMap copy of the map.
         Returns an mutable copy.
         """
         return FlexMap(self.objectMap.copy())
@@ -497,9 +456,6 @@ class FlexMap(Object):
     @method("Any", "Any", "Any")
     def fetch(self, key, thunk):
         """
-        @param: key, a key to look up by into the map.
-        @param: thunk, a zero arity function
-        @return: value
         Given a key and a thunk, will look up key in the map
         and if the value exists under that key then returns the value
         otherwise the thunk is called and its return value used.
@@ -512,24 +468,20 @@ class FlexMap(Object):
     @method("List")
     def getKeys(self):
         """
-        @return: a ConstList
-        Returns a list of the keys in the map.
+        Returns an immutable list of the keys in the map.
         """
         return self.objectMap.keys()
 
     @method("List")
     def getValues(self):
         """
-        @return: a ConstList
-        Returns a list of the values in the map.
+        Returns an immutable list of the values in the map.
         """
         return self.objectMap.values()
 
     @method("Any", "Any")
     def get(self, key):
         """
-        @param: a key
-        @return: a value
         Looks up the key in the map and if has an value returns the value
         otherwise it raises an ?error/exception?.
         """
@@ -541,7 +493,6 @@ class FlexMap(Object):
     @method("Map")
     def reverse(self):
         """
-        @return: a Map
         Makes an copy of the map whose order has been reversed.
         """
         d = monteMap()
@@ -555,7 +506,6 @@ class FlexMap(Object):
     @method("Map")
     def sortKeys(self):
         """
-        @return: a Map
         Makes an sorted-by-key copy of the map.
         """
         # Extract a list, sort it, pack it back into a dict.
@@ -569,7 +519,6 @@ class FlexMap(Object):
     @method("Map")
     def sortValues(self):
         """
-        @return: a Map
         Makes an sorted-by-value copy of the map.
         """
         # Same as sortKeys/0.
@@ -583,9 +532,6 @@ class FlexMap(Object):
     @method("Map", "Any", "Any", _verb="with")
     def _with(self, key, value):
         """
-        @param: a key
-        @param: a value
-        @return: a Map
         Makes an copy of the map where the given key has been set to the given value.
         """
         # Replace by key.
@@ -596,8 +542,6 @@ class FlexMap(Object):
     @method("Map", "Any")
     def without(self, key):
         """
-        @param: a key
-        @return: a Map
         Makes an copy of the map where the given key and its value has been removed.
         """
         # Even if we don't have the key, we need to copy since we're returning
@@ -611,7 +555,6 @@ class FlexMap(Object):
     @method("Any")
     def _makeIterator(self):
         """
-        @return: a MapIterator
         Makes an iterator for the map.
         The iterator iterates over an snapshot made when the iterator was made.
         """
@@ -620,8 +563,7 @@ class FlexMap(Object):
     @method("List")
     def _uncall(self):
         """
-        @return: a Portrayal of the map.
-        Used for serialization and some comparison purposes.
+        Returns a Portrayal of the map which is used for serialization and some comparison purposes.
         """
         from typhon.objects.collections.lists import wrapList
         return [ConstMap(self.objectMap.copy()), StrObject(u"diverge"),
@@ -630,17 +572,13 @@ class FlexMap(Object):
     @method("Bool", "Any")
     def contains(self, needle):
         """
-        @param: a key
-        @return: a Boolean
-        Answers true or false if given key is in the map.
+        Answers true if given key is in the map, false otherwise
         """
         return needle in self.objectMap
 
     @method("Map", "Map", _verb="or")
     def _or(self, other):
         """
-        @param: a Map
-        @return: a Map
         Returns an new map that is inclusive of this map and the given map.
         This maps keys shadow the given maps keys.
         """
@@ -655,9 +593,7 @@ class FlexMap(Object):
     @method("Map", "Int")
     def slice(self, start):
         """
-        @param: an index which is a positive integer
-        @return: a Map
-        Gives you the second half of the map after the given index.
+        Returns the second half of the map after the given index.
         """
         if start < 0:
             raise userError(u"slice/1: Negative start")
@@ -670,10 +606,7 @@ class FlexMap(Object):
     @method("Map", "Int", "Int", _verb="slice")
     def _slice(self, start, stop):
         """
-        @param: an index, the former one, which is a positive integer
-        @param: an index, the latter one, which is a positive integer
-        @return: a Map
-        Gives you the middle slice of the map between the former and latter index.
+        Returns the middle slice of the map between the given former and latter index.
         """
         if start < 0:
             raise userError(u"slice/1: Negative start")
@@ -688,7 +621,6 @@ class FlexMap(Object):
     @method("Int")
     def size(self):
         """
-        @return: number of entries, an Integer
         Returns back how many key value entries there are in the map.
         """
         return len(self.objectMap)
@@ -696,7 +628,6 @@ class FlexMap(Object):
     @method("Bool")
     def isEmpty(self):
         """
-        @return: a boolean
         Returns true if this map is empty, false otherwise.
         """
         return not self.objectMap
