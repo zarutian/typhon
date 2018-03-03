@@ -61,12 +61,16 @@ class ConstSet(Object):
 
     @method("Bool")
     def empty(self):
+        """
+        Deprecated, use isEmpty/0 instead
+        Returns true if the set is empty, false otherwise.
+        """
         return not self.objectSet
 
     @method("Bool", "Any")
     def contains(self, needle):
         """
-        Determine whether an element is in this collection.
+        Determine whether an given element is in this collection.
         """
 
         return needle in self.objectSet
