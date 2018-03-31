@@ -216,6 +216,9 @@ class TCPServerEndpoint(Object):
 
     @method("Any", "Any")
     def listenStream(self, handler):
+        """
+        The given handler will be invoked (run/2) whenever a new TCP connection is made to the server with that connections StreamSource and StreamSink.
+        """
         vat = currentVat.get()
         uv_server = ruv.alloc_tcp(vat.uv_loop)
         try:
